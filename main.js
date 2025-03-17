@@ -4,8 +4,11 @@ import { HttpsProxyAgent } from "https-proxy-agent";
 import { XAI_API } from "./const.js";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createXai } from "@ai-sdk/xai";
+import dotenv from "dotenv";
 import fetch from "node-fetch";
 import { generateText } from "ai";
+
+dotenv.config();
 
 const proxyUrl = "http://127.0.0.1:7890";
 const agent = new HttpsProxyAgent(proxyUrl);
@@ -24,6 +27,7 @@ const openai = createOpenAI({
   compatibility: "strict", // strict mode, enable when using the OpenAI API
   baseURL: "https://api.aiproxy.io/v1",
   apiKey: process.env.OPENAI_API_KEY,
+  fetch: fetchWithProxy,
 });
 
 const xai = createXai({
@@ -35,8 +39,8 @@ async function main() {
   while (true) {
     const userInput = await terminal.question("You: ");
     const { text } = await generateText({
-      // model: openai("gpt-4o"),
-      model: xai("grok-2-1212"),
+      model: openai("gpt-4o"),
+      // model: xai("grok-2-1212"),
       prompt: userInput,
     });
 
